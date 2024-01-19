@@ -7,6 +7,8 @@ use App\Models\Order;
 use App\Models\Wishlist;
 use App\Models\Shipping;
 use App\Models\Cart;
+use Illuminate\Support\Number;
+
 // use Auth;
 class Helper{
     public static function messageList()
@@ -173,6 +175,11 @@ class Helper{
     public static function shipping(){
         return Shipping::orderBy('id','DESC')->get();
     }
+
+    public static function number2String($number,$precision=2){
+        $number = intval($number);
+        return Number::format($number,$precision);
+    } 
 }
 
 ?>
