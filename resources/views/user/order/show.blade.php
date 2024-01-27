@@ -43,11 +43,21 @@
                 @endif
             </td>
             <td>
+              {{-- <form method="POST" action="{{route('order.destroy',[$order->id])}}">
+                @csrf
+                @method('update')
+                    <button class="btn btn-info btn-sm dltBtn" data-id={{$order->id}} style="height:30px; width:30px;border-radius:50%" data-toggle="tooltip" data-placement="bottom" title="Pay"><i class="fas fa-money-check-alt"></i></button>
+              </form> --}}
+              <div class="btn-group" role="group" aria-label="Basic example">
+                @if($order->payment_status=='unpaid')
+                  <button id="pay-button" class="btn btn-success btn-sm" style="height:30px; width:30px;border-radius:50%"  data-toggle="tooltip" data-placement="bottom" title="Pay"><i class="fas fa-money-check-alt	"></i></button>
+                  @endif
                 <form method="POST" action="{{route('order.destroy',[$order->id])}}">
                   @csrf
                   @method('delete')
-                      <button class="btn btn-danger btn-sm dltBtn" data-id={{$order->id}} style="height:30px; width:30px;border-radius:50%" data-toggle="tooltip" data-placement="bottom" title="Delete"><i class="fas fa-trash-alt"></i></button>
+                      <button class="btn btn-danger btn-sm" data-id={{$order->id}} style="height:30px; width:30px;border-radius:50%" data-toggle="tooltip" data-placement="bottom" title="Delete"><i class="fas fa-trash-alt"></i></button>
                 </form>
+              </div>
             </td>
 
         </tr>
@@ -90,7 +100,7 @@
                     </tr>
                     <tr>
                       <td>Payment Method</td>
-                      <td> : @if($order->payment_method=='cod') Cash on Delivery @else Paypal @endif</td>
+                      <td> : @if($order->payment_method=='cod') Cash on Delivery @else Transfer @endif</td>
                     </tr>
                     <tr>
                         <td>Payment Status</td>
@@ -151,4 +161,32 @@
     }
 
 </style>
+@endpush
+
+@push('scripts')
+{{-- SANDBOX: https://app.sandbox.midtrans.com/snap/snap.js --}}
+{{-- PRODUCTION: https://app.midtrans.com/snap/snap.js --}}
+<script src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="{{ env('MIDTRANS_CLIENT_KEY')}}"></script>
+<script type="text/javascript">
+  document.getElementById('pay-button').onclick = function(){
+    console.log('test');
+    // SnapToken acquired from previous step
+    snap.pay('<?=$order->snap_token?>', {
+      // Optional
+      onSuccess: function(result){
+        window.location.href = '{{ route('user.order.paid',$order->id) }}';
+        /* You may add your own js here, this is just example */ document.getElementById('result-json').innerHTML += JSON.stringify(result, null, 2);
+      },
+      // Optional
+      onPending: function(result){
+        console.log(result);
+        /* You may add your own js here, this is just example */ document.getElementById('result-json').innerHTML += JSON.stringify(result, null, 2);
+      },
+      // Optional
+      onError: function(result){
+        /* You may add your own js here, this is just example */ document.getElementById('result-json').innerHTML += JSON.stringify(result, null, 2);
+      }
+    });
+  };
+</script>
 @endpush

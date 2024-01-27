@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Shipping;
 use App\Models\Coupon;
+// use Illuminate\Support\Number;
+
 
 class ShippingController extends Controller
 {
@@ -16,6 +18,9 @@ class ShippingController extends Controller
     public function index()
     {
         $shipping=Shipping::orderBy('id','DESC')->paginate(10);
+        // foreach($shipping as $key=>$value){
+        //     $shipping[$key]->price = Number::format($value->price,2);
+        // }
         return view('backend.shipping.index')->with('shippings',$shipping);
     }
 

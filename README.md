@@ -1,3 +1,7 @@
+<<<<<<< HEAD
+=======
+
+>>>>>>> 1799e52e6c58cf1a8350be7f2e6a0ff92d657444
 ### Set up :
 
 1. Clone the repo and cd into it
@@ -13,4 +17,8 @@
 11. Edit ```.env``` file :- remove APP_URL
 10. ```php artisan serve``` or use virtual host
 11. Visit ```localhost:8000``` in your browser
+<<<<<<< HEAD
 12. Visit /admin if you want to access the admin panel. Admin Email/Password: ```admin@gmail.com```/```1111```. User Email/Password: ```user@gmail.com```/```1111```
+=======
+12. Visit /admin if you want to access the admin panel. Admin Email/Password: ```admin@gmail.com```/```1111```. User Email/Password: ```user@gmail.com```/```1111```
+>>>>>>> 1799e52e6c58cf1a8350be7f2e6a0ff92d657444

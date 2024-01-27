@@ -118,18 +118,48 @@ class OrderController extends Controller
         }
         // return $order_data['total_amount'];
         $order_data['status']="new";
-        if(request('payment_method')=='paypal'){
-            $order_data['payment_method']='paypal';
-            $order_data['payment_status']='paid';
-        }
-        else{
-            $order_data['payment_method']='cod';
-            $order_data['payment_status']='Unpaid';
-        }
+        
+        $order_data['payment_method']= "transfer"; //request('payment_method');
+        $order_data['payment_status']='Unpaid';
+
+        // if(request('payment_method')=='paypal'){
+        //     $order_data['payment_method']='paypal';
+        //     $order_data['payment_status']='paid';
+        // }
+        // else{
+        //     $order_data['payment_method']='cod';
+        //     $order_data['payment_status']='Unpaid';
+        // }
+             
+        // Set your Merchant Server Key
+        \Midtrans\Config::$serverKey = config('midtrans.serverKey');
+        // Set to Development/Sandbox Environment (default). Set to true for Production Environment (accept real transaction).
+        \Midtrans\Config::$isProduction = config('midtrans.isProduction');
+        // Set sanitization on (default)
+        \Midtrans\Config::$isSanitized = config('midtrans.isSanitized');
+        // Set 3DS transaction for credit card to true
+        \Midtrans\Config::$is3ds = config('midtrans.is3ds');
+
+        $params = array(
+            'transaction_details' => array(
+                'order_id' => rand(),
+                'gross_amount' => $order_data['total_amount'],
+            ),
+            'customer_details'  => array(
+                'first_name'    => $order_data['first_name'],
+                'last_name'     => $order_data['last_name'],
+                'email'         => $order_data['email'],
+                'phone'         => $order_data['phone'],
+                'shipping_address' => $order_data['address1']
+            )
+        );
+        
+        $snapToken = \Midtrans\Snap::getSnapToken($params);
+        $order_data['snap_token'] = $snapToken;
+
         $order->fill($order_data);
         $status=$order->save();
         if($order)
-        // dd($order->id);
         $users=User::where('role','admin')->first();
         $details=[
             'title'=>'New order created',
@@ -146,9 +176,10 @@ class OrderController extends Controller
         }
         Cart::where('user_id', auth()->user()->id)->where('order_id', null)->update(['order_id' => $order->id]);
 
-        // dd($users);        
-        request()->session()->flash('success','Your product successfully placed in order');
-        return redirect()->route('home');
+        // dd($users);   
+        //request()->session()->flash('success','Your product successfully placed in order');
+        return redirect()->route('user.order.show',$order->id);
+        // return redirect()->route('home');
     }
 
     /**
@@ -233,7 +264,10 @@ class OrderController extends Controller
             return redirect()->back();
         }
     }
-
+    public function pay($id){
+        $order=Order::find($id);
+        return redirect()->route('order.index');
+    }
     public function orderTrack(){
         return view('frontend.pages.order-track');
     }
@@ -304,4 +338,21 @@ class OrderController extends Controller
         }
         return $data;
     }
+
+    public function paymentSuccess(Request $request){
+        $id = $request->id; 
+        $order = Order::find($id);
+
+        $data['payment_status'] = "paid";
+        $status = $order->fill($data)->save();
+        
+        if($status){
+            request()->session()->flash('success','Your order successfully paid');
+        }
+        else{
+            request()->session()->flash('error','Error, Please try again');
+        }
+        return redirect()->route('user.order.show',$order->id);
+    }
+
 }

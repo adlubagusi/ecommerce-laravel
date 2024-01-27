@@ -113,10 +113,10 @@
 // Coupon
     Route::post('/coupon-store', [CouponController::class, 'couponStore'])->name('coupon-store');
 // Payment
-    Route::get('payment', [PayPalController::class, 'payment'])->name('payment');
-    Route::get('cancel', [PayPalController::class, 'cancel'])->name('payment.cancel');
-    Route::get('payment/success', [PayPalController::class, 'success'])->name('payment.success');
-
+//     Route::get('payment', [PayPalController::class, 'payment'])->name('payment');
+//     Route::get('cancel', [PayPalController::class, 'cancel'])->name('payment.cancel');
+//     Route::get('payment/success', [PayPalController::class, 'success'])->name('payment.success');   
+    Route::get('payment', [OrderController::class, 'payment'])->name('payment');
 
 // Backend section start
 
@@ -180,6 +180,8 @@
         Route::get('/order', "HomeController@orderIndex")->name('user.order.index');
         Route::get('/order/show/{id}', "HomeController@orderShow")->name('user.order.show');
         Route::delete('/order/delete/{id}', [HomeController::class, 'userOrderDelete'])->name('user.order.delete');
+        Route::get('/order/payment-success/{id}', "OrderController@paymentSuccess")->name('user.order.paid');
+        
         // Product Review
         Route::get('/user-review', [HomeController::class, 'productReviewIndex'])->name('user.productreview.index');
         Route::delete('/user-review/delete/{id}', [HomeController::class, 'productReviewDelete'])->name('user.productreview.delete');
