@@ -49,7 +49,7 @@
                     <button class="btn btn-info btn-sm dltBtn" data-id={{$order->id}} style="height:30px; width:30px;border-radius:50%" data-toggle="tooltip" data-placement="bottom" title="Pay"><i class="fas fa-money-check-alt"></i></button>
               </form> --}}
               <div class="btn-group" role="group" aria-label="Basic example">
-                <button class="btn btn-success btn-sm"><i class="fas fa-money-check-alt	"></i></button>
+                <a href="{{route(checkout)}}" class="btn btn-success btn-sm"><i class="fas fa-money-check-alt	"></i></a>
                 <form method="POST" action="{{route('order.destroy',[$order->id])}}">
                   @csrf
                   @method('delete')
